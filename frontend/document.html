@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <h2>Ajouter un Document</h2>
+    <!-- Formulaire d'ajout du document -->
+    <form id="ajouterDocumentForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="nom">Nom du Document</label>
+            <input type="text" name="nom" id="nom" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="fichier">Fichier du Document</label>
+            <input type="file" name="fichier" id="fichier" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Ajouter le Document</button>
+    </form>
+
+    <!-- Message de succès ou d'erreur -->
+    <div id="message" class="mt-3"></div>
+
+    <!-- Inclure jQuery (nécessaire pour AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Lorsque le formulaire est soumis
+        $('#ajouterDocumentForm').on('submit', function (e) {
+            e.preventDefault();  // Empêche l'envoi traditionnel du formulaire
+
+            // Récupérer les données du formulaire
+            var formData = new FormData(this);
+
+            // Effectuer la requête AJAX
+            $.ajax({
+                type: 'POST',
+                url: 'add_document.php',
+                data: formData,
+                dataType: 'json',  // Attendre une réponse en JSON
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    // Afficher la réponse dans la console pour débogage
+                    console.log(response);
+
+                    // Vérifier si l'ajout a réussi
+                    if (response.success) {
+                        // Afficher un message de succès
+                        $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
+                        // Optionnel : réinitialiser le formulaire
+                        $('#ajouterDocumentForm')[0].reset();
+                    } else {
+                        // Afficher un message d'erreur
+                        $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Afficher une erreur si la requête échoue
+                    console.log("Erreur lors de la requête AJAX : " + error);
+                    $('#message').html('<div class="alert alert-danger">Une erreur est survenue lors de l\'envoi des données.</div>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Employé</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body class="container mt-5">
+    <h2>Ajouter un Employé</h2>
+    <form id="formAddEmploye">
+        <div class="form-group">
+            <label for="nom">Nom</label>
+            <input type="text" name="nom" id="nom" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="prenom">Prénom</label>
+            <input type="text" name="prenom" id="prenom" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="poste">Poste</label>
+            <input type="text" name="poste" id="poste" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="date_embauche">Date d'Embauche</label>
+            <input type="date" name="date_embauche" id="date_embauche" class="form-control" required>
+        </div>
+        <button type="button" id="submitBtn" class="btn btn-primary">Ajouter</button>
+    </form>
+
+    <!-- Modal pour afficher un message -->
+    <div id="modalMessage" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalText">L'employé a été ajouté avec succès.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#submitBtn').click(function() {
+                // Récupérer les données du formulaire
+                const formData = {
+                    nom: $('#nom').val(),
+                    prenom: $('#prenom').val(),
+                    poste: $('#poste').val(),
+                    email: $('#email').val(),
+                    date_embauche: $('#date_embauche').val()  // Ajouter la date d'embauche
+                };
+
+                // Faire une requête AJAX pour ajouter un employé
+                $.ajax({
+                    url: 'add_employe.php',  // Appeler le script PHP pour ajouter l'employé
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        response = JSON.parse(response);  // Convertir la réponse JSON
+                        if (response.success) {
+                            $('#modalText').text(response.message);
+                        } else {
+                            $('#modalText').text('Erreur : ' + response.message);
+                        }
+                        $('#modalMessage').modal('show');
+                    },
+                    error: function() {
+                        $('#modalText').text("Une erreur est survenue.");
+                        $('#modalMessage').modal('show');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
